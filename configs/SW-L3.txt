@@ -1,0 +1,181 @@
+hostname SW-L3
+!
+boot-start-marker
+boot-end-marker
+!
+!
+logging discriminator EXCESS severity drops 6 msg-body drops EXCESSCOLL 
+logging buffered 50000
+logging console discriminator EXCESS
+enable secret 5 $1$JD/K$hMekEAh2Vwi5f7.7PAKtz/
+!
+no aaa new-model
+!         
+!
+!
+!
+!
+no ip icmp rate-limit unreachable
+!
+!
+!
+no ip domain-lookup
+ip cef
+no ipv6 cef
+!
+!
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+!
+! 
+!
+!
+!
+!         
+!
+!
+!
+!
+!
+!
+!
+!
+interface Port-channel1
+ description portchannel vers SWR0
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Port-channel2
+ description portchannel vers SWR1
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet0/0
+ switchport access vlan 99
+ switchport trunk encapsulation dot1q
+ switchport mode access
+ switchport port-security
+!
+interface Ethernet0/1
+ switchport access vlan 99
+ switchport trunk encapsulation dot1q
+ switchport mode access
+ switchport port-security
+!
+interface Ethernet0/2
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ channel-group 1 mode active
+!
+interface Ethernet0/3
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ channel-group 1 mode active
+!
+interface Ethernet1/0
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ channel-group 2 mode active
+!
+interface Ethernet1/1
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ channel-group 2 mode active
+!
+interface Ethernet1/2
+ shutdown
+!
+interface Ethernet1/3
+ shutdown
+!
+interface Ethernet2/0
+ shutdown
+!
+interface Ethernet2/1
+ shutdown
+!
+interface Ethernet2/2
+ shutdown
+!
+interface Ethernet2/3
+ shutdown
+!
+interface Ethernet3/0
+ shutdown
+!
+interface Ethernet3/1
+ shutdown
+!
+interface Ethernet3/2
+ shutdown
+!
+interface Ethernet3/3
+ shutdown
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+interface Vlan10
+ ip address 172.168.15.1 255.255.255.192
+ ip access-group bloque_10_to_30 in
+ ip helper-address 172.168.16.10 
+!
+interface Vlan20
+ ip address 172.168.15.65 255.255.255.192
+ ip access-group bloque_20_to_30 in
+ ip helper-address 172.168.16.10 
+!
+interface Vlan30
+ ip address 172.168.15.129 255.255.255.192
+ ip access-group bloque_30_to_10_20 in
+ ip helper-address 172.168.16.10 
+!
+interface Vlan99
+ ip address 172.168.15.196 255.255.255.240
+!
+ip forward-protocol nd
+!
+ip tcp synwait-time 5
+ip http server
+ip http secure-server
+!
+ip route 0.0.0.0 0.0.0.0 172.168.15.193
+ip ssh server algorithm encryption aes128-ctr aes192-ctr aes256-ctr
+ip ssh client algorithm encryption aes128-ctr aes192-ctr aes256-ctr
+!
+ip access-list extended bloque_10_to_30
+ deny   ip 172.168.15.0 0.0.0.63 172.168.15.128 0.0.0.63
+ permit ip any any
+ip access-list extended bloque_20_to_30
+ deny   ip 172.168.15.64 0.0.0.63 172.168.15.128 0.0.0.63
+ permit ip any any
+ip access-list extended bloque_30_to_10_20
+ deny   ip 172.168.15.128 0.0.0.63 172.168.15.0 0.0.0.63
+ deny   ip 172.168.15.128 0.0.0.63 172.168.15.64 0.0.0.63
+ permit ip any any
+!
+!
+!
+!
+control-plane
+!
+!
+line con 0
+ exec-timeout 0 0
+ privilege level 15
+ password 7 15213C20570A0F161B10
+ logging synchronous
+line aux 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+line vty 0 4
+ login
+!
+!
+!
+end
+

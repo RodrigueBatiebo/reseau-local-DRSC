@@ -1,0 +1,154 @@
+hostname SW-R0
+!
+boot-start-marker
+boot-end-marker
+!
+!
+logging discriminator EXCESS severity drops 6 msg-body drops EXCESSCOLL 
+logging buffered 50000
+logging console discriminator EXCESS
+enable secret 5 $1$CKI0$M9syODUC.s1Vq9uP3r9Ay1
+!
+no aaa new-model
+!         
+!
+!
+!
+!
+no ip icmp rate-limit unreachable
+!
+!
+!
+no ip domain-lookup
+ip cef
+no ipv6 cef
+!
+!
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+!
+! 
+!
+!
+!
+!         
+!
+!
+!
+!
+!
+!
+!
+!
+interface Port-channel1
+ description portchannel vers SW-L3
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet0/0
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ channel-group 1 mode active
+!
+interface Ethernet0/1
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ channel-group 1 mode active
+!         
+interface Ethernet0/2
+ switchport access vlan 20
+ switchport mode access
+ switchport port-security mac-address sticky
+ switchport port-security mac-address sticky 0242.d92d.0c00
+ switchport port-security
+!
+interface Ethernet0/3
+ switchport access vlan 20
+ switchport mode access
+ switchport port-security mac-address sticky
+ switchport port-security mac-address sticky 0242.5a39.3900
+ switchport port-security
+!
+interface Ethernet1/0
+ switchport access vlan 30
+ switchport mode access
+ switchport port-security mac-address sticky
+ switchport port-security mac-address sticky aabb.cc00.0400
+!
+interface Ethernet1/1
+ switchport access vlan 10
+ switchport mode access
+ switchport port-security mac-address sticky
+ switchport port-security mac-address sticky 0242.8e22.d200
+!
+interface Ethernet1/2
+ switchport access vlan 10
+ switchport mode access
+ switchport port-security mac-address sticky
+ switchport port-security mac-address sticky 0242.b62e.4300
+!
+interface Ethernet1/3
+ shutdown
+!
+interface Ethernet2/0
+ shutdown
+!
+interface Ethernet2/1
+ shutdown
+!
+interface Ethernet2/2
+ shutdown
+!
+interface Ethernet2/3
+ shutdown 
+!
+interface Ethernet3/0
+ shutdown
+!
+interface Ethernet3/1
+ shutdown
+!
+interface Ethernet3/2
+ shutdown
+!
+interface Ethernet3/3
+ shutdown
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+ip forward-protocol nd
+!
+ip tcp synwait-time 5
+ip http server
+ip http secure-server
+!         
+ip ssh server algorithm encryption aes128-ctr aes192-ctr aes256-ctr
+ip ssh client algorithm encryption aes128-ctr aes192-ctr aes256-ctr
+!
+!
+!
+!
+!
+control-plane
+!
+!
+line con 0
+ exec-timeout 0 0
+ privilege level 15
+ password 7 0538313D716C6A3B2A26
+ logging synchronous
+line aux 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+line vty 0 4
+ login
+!
+!         
+!
+end
+
