@@ -3,159 +3,187 @@ hostname SW-L3
 boot-start-marker
 boot-end-marker
 !
-!
-logging discriminator EXCESS severity drops 6 msg-body drops EXCESSCOLL 
-logging buffered 50000
-logging console discriminator EXCESS
-enable secret 5 $1$JD/K$hMekEAh2Vwi5f7.7PAKtz/
+enable secret 5 $1$lgIE$tX88TZ/VLqlTx5Vd6Q32N.
 !
 no aaa new-model
+memory-size iomem 5
+no ip icmp rate-limit unreachable
+ip cef
+!
+!
+!
+!         
+no ip domain lookup
+no ip igmp snooping vlan 99
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
 !         
 !
+macro name add_vlan
+end
+vlan database
+vlan $v
+exit
+@
+macro name del_vlan
+end
+vlan database
+no vlan $v
+exit
+@
 !
-!
-!
-no ip icmp rate-limit unreachable
-!
-!
-!
-no ip domain-lookup
-ip cef
-no ipv6 cef
-!
-!
-!
-spanning-tree mode pvst
-spanning-tree extend system-id
-!
-!
+vtp file nvram:vlan.dat
+archive
+ log config
+  hidekeys
 ! 
 !
 !
 !
-!         
+ip tcp synwait-time 5
 !
 !
 !
-!
-!
-!
-!
-!
-interface Port-channel1
- description portchannel vers SWR0
- switchport trunk encapsulation dot1q
- switchport mode trunk
 !
 interface Port-channel2
- description portchannel vers SWR1
- switchport trunk encapsulation dot1q
  switchport mode trunk
 !
-interface Ethernet0/0
+interface Port-channel1
+ switchport mode trunk
+!
+interface FastEthernet0/0
+ description *** Unused for Layer2 EtherSwitch ***
+ no ip address
+ duplex auto
+ speed auto
+!
+interface FastEthernet0/1
+ description *** Unused for Layer2 EtherSwitch ***
+ no ip address
+ shutdown
+ duplex auto
+ speed auto
+!         
+interface FastEthernet1/0
+ switchport mode trunk
+ channel-group 2 mode on
+!
+interface FastEthernet1/1
+ switchport mode trunk
+ channel-group 2 mode on
+!
+interface FastEthernet1/2
+ switchport mode trunk
+ channel-group 1 mode on
+!
+interface FastEthernet1/3
+ switchport mode trunk
+ channel-group 1 mode on
+!
+interface FastEthernet1/4
  switchport access vlan 99
- switchport trunk encapsulation dot1q
- switchport mode access
- switchport port-security
+ duplex full
+ speed 100
 !
-interface Ethernet0/1
+interface FastEthernet1/5
  switchport access vlan 99
- switchport trunk encapsulation dot1q
- switchport mode access
- switchport port-security
+ duplex full
+ speed 100
 !
-interface Ethernet0/2
- switchport trunk encapsulation dot1q
- switchport mode trunk
- channel-group 1 mode active
+interface FastEthernet1/6
+ duplex full
+ speed 100
 !
-interface Ethernet0/3
- switchport trunk encapsulation dot1q
- switchport mode trunk
- channel-group 1 mode active
+interface FastEthernet1/7
+ duplex full
+ speed 100
 !
-interface Ethernet1/0
- switchport trunk encapsulation dot1q
- switchport mode trunk
- channel-group 2 mode active
+interface FastEthernet1/8
+ duplex full
+ speed 100
 !
-interface Ethernet1/1
- switchport trunk encapsulation dot1q
- switchport mode trunk
- channel-group 2 mode active
+interface FastEthernet1/9
+ duplex full
+ speed 100
 !
-interface Ethernet1/2
- shutdown
+interface FastEthernet1/10
+ duplex full
+ speed 100
+!         
+interface FastEthernet1/11
+ duplex full
+ speed 100
 !
-interface Ethernet1/3
- shutdown
+interface FastEthernet1/12
+ duplex full
+ speed 100
 !
-interface Ethernet2/0
- shutdown
+interface FastEthernet1/13
+ duplex full
+ speed 100
 !
-interface Ethernet2/1
- shutdown
+interface FastEthernet1/14
+ duplex full
+ speed 100
 !
-interface Ethernet2/2
- shutdown
-!
-interface Ethernet2/3
- shutdown
-!
-interface Ethernet3/0
- shutdown
-!
-interface Ethernet3/1
- shutdown
-!
-interface Ethernet3/2
- shutdown
-!
-interface Ethernet3/3
- shutdown
+interface FastEthernet1/15
+ duplex full
+ speed 100
 !
 interface Vlan1
  no ip address
- shutdown
+ shutdown 
 !
 interface Vlan10
  ip address 172.168.15.1 255.255.255.192
- ip access-group bloque_10_to_30 in
- ip helper-address 172.168.16.10 
+ ip helper-address 192.168.16.10
 !
 interface Vlan20
  ip address 172.168.15.65 255.255.255.192
- ip access-group bloque_20_to_30 in
- ip helper-address 172.168.16.10 
+ ip helper-address 192.168.16.10
 !
 interface Vlan30
  ip address 172.168.15.129 255.255.255.192
- ip access-group bloque_30_to_10_20 in
- ip helper-address 172.168.16.10 
+ ip helper-address 192.168.16.10
 !
 interface Vlan99
  ip address 172.168.15.196 255.255.255.240
 !
+router ospf 10
+ router-id 3.3.3.3
+ log-adjacency-changes
+ network 172.168.15.0 0.0.0.63 area 0
+ network 172.168.15.64 0.0.0.63 area 0
+ network 172.168.15.128 0.0.0.63 area 0
+ network 172.168.15.192 0.0.0.15 area 0
+!
 ip forward-protocol nd
 !
-ip tcp synwait-time 5
-ip http server
-ip http secure-server
 !
-ip route 0.0.0.0 0.0.0.0 172.168.15.193
-ip ssh server algorithm encryption aes128-ctr aes192-ctr aes256-ctr
-ip ssh client algorithm encryption aes128-ctr aes192-ctr aes256-ctr
+no ip http server
+no ip http secure-server
 !
-ip access-list extended bloque_10_to_30
- deny   ip 172.168.15.0 0.0.0.63 172.168.15.128 0.0.0.63
- permit ip any any
-ip access-list extended bloque_20_to_30
- deny   ip 172.168.15.64 0.0.0.63 172.168.15.128 0.0.0.63
- permit ip any any
-ip access-list extended bloque_30_to_10_20
- deny   ip 172.168.15.128 0.0.0.63 172.168.15.0 0.0.0.63
- deny   ip 172.168.15.128 0.0.0.63 172.168.15.64 0.0.0.63
- permit ip any any
+no cdp log mismatch duplex
+!
+!
 !
 !
 !
@@ -163,10 +191,38 @@ ip access-list extended bloque_30_to_10_20
 control-plane
 !
 !
+!
+!
+!
+!
+!
+!         
+!
+banner exec ^C
+
+***************************************************************
+This is a normal Router with a Switch module inside (NM-16ESW)
+It has been pre-configured with hard-coded speed and duplex
+
+To create vlans use the command "vlan database" in exec mode
+After creating all desired vlans use "exit" to apply the config
+
+To view existing vlans use the command "show vlan-switch brief"
+
+Alias(exec)     : vl   - "show vlan-switch brief" command
+Alias(configure): va X - macro to add vlan X
+Alias(configure): vd X - macro to delete vlan X
+***************************************************************
+
+^C
+alias configure va macro global trace add_vlan $v
+alias configure vd macro global trace del_vlan $v
+alias exec vl show vlan-switch brief
+!
 line con 0
  exec-timeout 0 0
  privilege level 15
- password 7 15213C20570A0F161B10
+ password 7 0635380D1F6E2D2B3634
  logging synchronous
 line aux 0
  exec-timeout 0 0
@@ -174,7 +230,6 @@ line aux 0
  logging synchronous
 line vty 0 4
  login
-!
 !
 !
 end
